@@ -12,7 +12,7 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from forms import MovieForm, form_errors
 from models import db, Movie
-
+from flask_wtf.csrf import generate_csrf
 ###
 # Routing for your application.
 ###
@@ -22,7 +22,7 @@ def index():
     return jsonify(message="This is the beginning of our API")
 
 
-@app.route('/submit_movie', methods=['GET', 'POST'])
+@app.route('/api/v1/movies', methods=['GET', 'POST'])
 def submit_movie():
     form = MovieForm()
     if form.validate_on_submit():
@@ -91,6 +91,10 @@ def movies():
         errors = form_errors(form)
         return jsonify({"errors": errors}), 400
 
+
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+ return jsonify({'csrf_token': generate_csrf()}) 
 
 
 @app.route('/<file_name>.txt')
